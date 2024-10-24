@@ -1,0 +1,125 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block content %}
+
+<!-- ========================= SECTION MAIN ========================= -->
+<section class="section-intro padding-y-sm banner">
+<div class="container">
+
+<div class="intro-banner-wrap">
+	<div class="content-banner">
+		<p>Café Delicioso</p>
+		<h2>100% Natural <br />Café Fresco</h2>
+		<a href="{%url 'store'%}" class="btn btn-outline-primary custom-button">Comprar ahora</a>
+	</div>
+</div>
+
+</div> <!-- container //  -->
+</section>
+<!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- ========================= SECTION CARDS ========================= -->
+<section class="container container-features">
+	<div class="card-feature">
+		<i class="fa fa-motorcycle"></i>
+		<div class="feature-content">
+			<span>Envío gratuito</span>
+			<p>En pedido superior a $15</p>
+		</div>
+	</div>
+	<div class="card-feature">
+		<i class="fa fa-wallet"></i>
+		<div class="feature-content">
+			<span>Todo medio de pago</span>
+			<p>Aceptamos todo medio de pago</p>
+		</div>
+	</div>
+	<div class="card-feature">
+		<i class="fas fa-map-marker-alt"></i>
+		<div class="feature-content">
+			<span>Encuéntranos en</span>
+			<p>Quillota - La Concepción 267</p>
+		</div>
+	</div>
+	<div class="card-feature">
+		<i class="fa fa-headset"></i>
+		<div class="feature-content">
+			<span>Realiza pedidos por llamada</span>
+			<p>LLámenos 24/7 al 123-456-7890</p>
+		</div>
+	</div>
+</section>
+
+ <!-- ========================= SECTION CARDS END ========================= -->
+
+ <!-- ========================= SECTION CATEGORIES ========================= -->
+
+<section id="categoria" class="container top-categories">
+	<h1 class="heading-1">Categorías Recomendadas</h1>
+
+    <div class="container-categories swiper">
+        <div class="swiper-wrapper">
+            {% for category in links %}
+            <div class="card-category category-moca swiper-slide">
+                <p>{{category.nombre_categoria}}</p>
+                <span><a href="{{ category.get_url }}">Ver más</a></span>
+            </div>
+            {% endfor %}
+        </div>
+		
+		<!--Navigation Buttons-->
+		<div class="swiper-button-prev">
+			<i class="fa fa-chevron-left"></i>
+		</div>
+		<div class="swiper-button-next">
+			<i class="fa fa-chevron-right"></i>
+		</div>
+	</div>
+</section>
+
+<!-- ========================= SECTION CATEGORIES END ========================= -->
+
+<!-- ========================= SECTION  ========================= -->
+<section class="section-name padding-y-sm">
+<div class="container">
+
+<header class="section-heading">
+	<a href="{%url 'store'%}" class="btn btn-outline-primary float-right custom-button">Ver todo</a>
+	<h3 class="section-title">Productos destacados</h3>
+</header><!-- sect-heading -->
+
+	
+<div class="row">
+    {% for producto in productos %}
+    <div class="col-md-3">
+        <div class="card card-product-grid">
+            <a href="{{producto.get_url}}" class="img-wrap">
+                <img src="{{ producto.imagen.url }}">
+            </a>
+            <figcaption class="info-wrap">
+                <a href="{{producto.get_url}}" class="title">{{ producto.nombre_producto }}</a>
+                <div class="price mt-1">${{ producto.precio }}</div>
+            </figcaption>
+        </div>
+    </div> <!-- col.// -->
+    {% endfor %}
+</div> <!-- row.// -->
+
+</div><!-- container // -->
+</section>
+<!-- ========================= SECTION  END// ========================= -->
+
+
+
+
+
+ 
+<script
+src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script
+src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</body>
+</html>
+
+{% endblock %}
