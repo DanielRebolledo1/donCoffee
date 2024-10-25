@@ -31,19 +31,21 @@
 
               <hr>
 
+              {% if single_product.categoria.nombre_categoria == 'Cafe' %}
               <div class="row">
                 <div class="item-option-select">
                   <h6>Elige el tamaño</h6>
                   <select name="tamaño" class="form-control" required>
                     {% for i in single_product.variante_set.all %}
-                      <option value="{{i.variante_value | lower}}" 
+                      <option value="{{ i.variante_value | lower }}" 
                         {% if i.variante_value|lower == 'estandar' %} selected {% endif %}>
-                        {{i.variante_value | capfirst}}
+                        {{ i.variante_value | capfirst }}
                       </option>
                     {% endfor %}
                   </select>
                 </div>
               </div>
+            {% endif %}
               
               
               <hr>

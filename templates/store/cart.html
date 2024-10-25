@@ -43,11 +43,11 @@
                                                 {% for item in cart_item.variantes.all %}
                                                     {{ item.variante_categoria|capfirst }} : {{ item.variante_value|capfirst }}
                                                     <br>
-                                                    {% if item.variante_value == 'Pequeño'%}
+                                                    <!-- {% if item.variante_value == 'Pequeño'%}
                                                         Precio de tamaño: -${{ item.variante_precio }}
                                                     {% else %}
                                                     Precio de tamaño: ${{ item.variante_precio }}
-                                                    {% endif %}
+                                                    {% endif %} -->
                                                     
                                                 {% endfor %}
                                             {% endif %}

@@ -38,11 +38,19 @@ variante_categoria_choice = (
 
 )
 
+variante_value_choice = (
+
+    # ('Pequeño', 'Pequeño'),
+    ('Estandar', 'Estandar'),
+    # ('Grande', 'Grande'),
+
+)
+
 class Variante(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     variante_categoria = models.CharField(max_length=100, choices=variante_categoria_choice)
     variante_precio = models.IntegerField()
-    variante_value = models.CharField(max_length=100)
+    variante_value = models.CharField(max_length=100, choices=variante_value_choice)
     is_active = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(auto_now=True)
 
