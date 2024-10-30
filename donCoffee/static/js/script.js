@@ -27,6 +27,29 @@ $(function() {
     if ($('[data-toggle="tooltip"]').length > 0) {  
         $('[data-toggle="tooltip"]').tooltip();
     }
+    
+    //Function to validate the password
+    $('#password, #confirm_password').on('keyup', function() {
+        let password = $('#password').val();
+        let confirmPassword = $('#confirm_password').val();
+
+        if (password.length < 8) {
+            $('#password').css('border-color', 'red');
+            $('#password-error').text('La contraseña debe tener al menos 8 caracteres.').show();
+        } else {
+            $('#password').css('border-color', '');
+            $('#password-error').hide();
+        }
+
+        if (password && confirmPassword && password !== confirmPassword) {
+            $('#confirm_password').css('border-color', 'red');
+            $('#confirm-password-error').text('Las contraseñas no coinciden.').show();
+        } else {
+            $('#confirm_password').css('border-color', '');
+            $('#confirm-password-error').hide();
+        }
+    });
+
     let swiperCards = new Swiper('.container-categories', {
         loop: true,
         spaceBetween: 32,
@@ -55,15 +78,24 @@ $(function() {
     
         }
     
-      });
-
-      
+      });   
       
 });
 
 // jquery end
 
+setTimeout(function(){
+    $('#message').fadeOut('slow')
+}, 4000)
 
+//Este codigo es para que se eliminen los mensajes de error 1 por uno
+ $(document).ready(function() {
+     $('#message .alert').each(function(index, element) {
+         setTimeout(function() {
+             $(element).fadeOut('slow');
+         }, 4000 * (index + 1)); // Añadimos +1 para que el primer mensaje espere 4 segundos
+     });
+ });
 
 //ESTE ES EL ANTIGUO CODIGO
 

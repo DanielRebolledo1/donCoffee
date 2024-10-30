@@ -6,15 +6,23 @@
 <section class="section-conten padding-y" style="min-height:84vh">
 
     <!-- ============================ COMPONENT LOGIN   ================================= -->
+    {% if request.GET.command == 'verification' %}
+    <div class="container mx-auto alert alert-info text-center" role="alert" style="max-width: 1024px; margin-top:100px;">
+      Se ha enviado un correo de verificacion a su email [{{request.GET.email}}]
+      <br><br>
+      Si ya verificó su cuenta, acceda aquí <a href="{% url 'login' %}">Iniciar sesión</a>
+    </div>
+    {% else %}
         <div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
           <div class="card-body">
           <h4 class="card-title mb-4">Iniciar sesión</h4>
-          <form>
+          <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
               <div class="form-group">
-                 <input type="email" class="form-control" placeholder="Ingrese su correo" >
+                 <input type="email" class="form-control" placeholder="Ingrese su correo" name="email">
               </div> <!-- form-group// -->
               <div class="form-group">
-                <input type="password" class="form-control" placeholder="Contraseña" >
+                <input type="password" class="form-control" placeholder="Contraseña" name="password">
               </div> <!-- form-group// -->
               
               <div class="form-group">
@@ -24,6 +32,7 @@
               <div class="form-group">
                   <button type="submit" class="btn btn-primary btn-block custom-button"> Iniciar sesión  </button>
               </div> <!-- form-group// -->    
+              {% include 'includes/alerts.html' %} 
           </form>
           </div> <!-- card-body.// -->
         </div> <!-- card .// -->
@@ -31,7 +40,7 @@
          <p class="text-center mt-4">¿No tiene una cuenta? <a href="{% url 'register' %}" class="crearCuenta">Registrarse</a></p>
          <br><br>
     <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
-    
+    {% endif %}
     
     </section>
     <!-- ========================= SECTION CONTENT END// ========================= -->
