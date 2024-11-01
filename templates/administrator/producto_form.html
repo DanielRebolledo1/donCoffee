@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="section-content padding-y">
+    <div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+        <article class="card-body">
+            <header class="mb-4">
+                <h4 class="card-title">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %} Producto</h4>
+            </header>
+            <form method="post" enctype="multipart/form-data">
+                {% include 'includes/alerts.html' %} 
+                {% csrf_token %}
+
+                <div class="form-row justify-content-center"> <!-- Justificar al centro -->
+                    <div class="col-md-12 form-group"> <!-- Cambiar a col-md-12 -->
+                        <label>Nombre del producto</label>
+                        {{ form.nombre_producto }}
+                        {{ form.nombre_producto.errors }}
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row end.// -->
+
+                <div class="form-row justify-content-center"> <!-- Justificar al centro -->
+                    <div class="col-md-12 form-group"> <!-- Cambiar a col-md-12 -->
+                        <label>Precio</label>
+                        {{ form.precio }}
+                    </div> <!-- form-group end.// -->
+                </div>
+
+                <div class="form-row justify-content-center"> <!-- Justificar al centro -->
+                    <div class="col-md-12 form-group"> <!-- Cambiar a col-md-12 -->
+                        <label>Categoría</label>
+                        {{ form.categoria }}
+                    </div> <!-- form-group end.// -->
+                </div>
+
+                <div class="form-row justify-content-center"> <!-- Justificar al centro -->
+                    <div class="col-md-12 form-group"> <!-- Cambiar a col-md-12 -->
+                        <label>Descripción</label>
+                        {{ form.descripcion }}
+                    </div> <!-- form-group end.// -->
+                </div>
+
+                <div class="form-row justify-content-center"> <!-- Justificar al centro -->
+                    <div class="col-md-12 form-group"> <!-- Cambiar a col-md-12 -->
+                        <label>Imagen</label>
+                        {{ form.imagen }}
+                    </div> <!-- form-group end.// -->
+                </div>
+                
+                <div class="form-row justify-content-center"> <!-- Justificar al centro -->
+                    <div class="col-md-12 form-group"> <!-- Cambiar a col-md-12 -->
+                        <label>Stock</label>
+                        {{ form.stock }}
+                    </div> <!-- form-group end.// -->
+                </div>
+
+                <div class="form-row justify-content-center"> <!-- Justificar al centro -->
+                    <div class="form-group col-md-12"> <!-- Cambiar a col-md-12 -->
+                        <label>Disponible</label>
+                        {{ form.disponible }}
+                    </div> <!-- form-group end.// -->
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block custom-button">Guardar</button>
+                </div> <!-- form-group// -->
+
+                {% include 'includes/alerts.html' %}
+            </form>
+        </article><!-- card-body.// -->
+    </div> <!-- card .// -->
+</section>
+{% endblock %}

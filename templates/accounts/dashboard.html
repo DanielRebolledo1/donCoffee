@@ -19,7 +19,10 @@
                 <a class="list-group-item" href="#"> Received orders </a>
             </ul>
             <br>
-            <a class="btn btn-light btn-block" href="{% url 'logout' %}"> <i class="fa fa-power-off"></i> <span class="text">Log out</span> </a> 
+            <a class="btn btn-light btn-block" href="{% url 'logout' %}"> <i class="fa fa-power-off"></i> <span class="text">Cerrar Sesión</span> </a> 
+            {% if user.is_authenticated and user.is_staff %}
+            <a class="btn btn-light btn-block" href="{% url 'producto_list' %}"><i class="fa fa-mug-hot"></i> <span class="text">Administrar Web</span></a>
+            {% endif %}
             <!--   SIDEBAR .//END   -->
         </aside>
         <main class="col-md-9">
@@ -92,7 +95,7 @@
         </main>
     </div> <!-- row.// -->
     </div>
-    
+
     
     </section>
     <!-- ========================= SECTION CONTENT END// ========================= -->    

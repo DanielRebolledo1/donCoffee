@@ -1,10 +1,13 @@
-
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.urls import reverse_lazy
+from django.contrib import messages
 from category.models import Categoria
 from carts.models import CartItem
 from carts.views import _cart_id
 from .models import Producto
+from .forms import ProductoForm
+from django.contrib.auth.decorators import user_passes_test
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
@@ -61,3 +64,62 @@ def search(request):
             'productos_count': productos_count,
         }
     return render(request, 'store/store.html', context)
+
+
+# ADMINISTRATOR
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff  # user.is_staff es True para usuarios administradores
+
+@user_passes_test(is_admin)
+# Lista de productos
+def producto_list(request):
+    productos = Producto.objects.all()
+    context = {'productos': productos}
+    return render(request, 'administrator/producto_list.html', context)
+
+
+@user_passes_test(is_admin)
+# Crear producto
+def producto_create(request):
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, 'Producto creado exitosamente.')
+                return redirect('producto_list')
+            except ValidationError as e:
+                form.add_error(None, e)
+                messages.error(request, str(e))
+        else:
+            messages.error(request, 'Error al crear el producto. Revisa los campos.')
+    else:
+        form = ProductoForm()
+    
+    return render(request, 'administrator/producto_form.html', {'form': form})
+
+@user_passes_test(is_admin)
+# Actualizar producto
+def producto_update(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES, instance=producto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Producto actualizado exitosamente')
+            return redirect('producto_list')
+    else:
+        form = ProductoForm(instance=producto)
+    return render(request, 'administrator/producto_form.html', {'form': form})
+
+
+@user_passes_test(is_admin)
+# Eliminar producto
+def producto_delete(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
+    if request.method == 'POST':
+        producto.delete()
+        messages.success(request, 'Producto eliminado exitosamente')
+        return redirect('producto_list')
+    return render(request, 'administrator/producto_confirm_delete.html', {'producto': producto})

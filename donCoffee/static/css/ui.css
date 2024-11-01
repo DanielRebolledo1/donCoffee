@@ -1832,4 +1832,110 @@ a.crearCuenta:hover {
   display: block;
 }
 
+.content-table {
+  border-collapse: collapse;
+  background-color: #f0f0f0;
+  margin: 25px auto; /* Centramos horizontalmente */
+  font-size: 1.1em; /* Aumenta el tamaño del texto */
+  width: 80%; /* Hacemos la tabla más ancha */
+  max-width: 1000px; /* Limite máximo para evitar que ocupe toda la pantalla */
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.content-table thead tr {
+  background-color: #c7a17a;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.content-table th,
+.content-table td {
+  padding: 16px 20px; /* Aumenta el espaciado para hacer la tabla más espaciosa */
+}
+
+.content-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.content-table td:first-child {
+  text-align: left; /* Alinea el texto de la primera columna a la izquierda */
+}
+
+.content-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.content-table tbody tr:last-of-type {
+  border-bottom: 2px solid #c7a17a;
+}
+
+.content-table button.btn {
+  font-size: 1em; /* Tamaño de fuente del botón */
+  padding: 8px 12px; /* Aumenta el padding para hacerlo más ancho */
+  width: 50px; /* Establece un ancho fijo para todos los botones */
+  height: 40px; /* Establece una altura fija para todos los botones */
+  display: flex; /* Utiliza flexbox para centrar el contenido */
+  justify-content: center; /* Centra horizontalmente el icono */
+  align-items: center; /* Centra verticalmente el icono */
+  border: none; /* Quita el borde si no lo necesitas */
+  border-radius: 15px; /* Redondea los bordes del botón */
+  background-color: #c7a17a; /* Cambia el color de fondo si lo deseas */
+  color: white; /* Color del texto o icono */
+  transition: background-color 0.3s; /* Añade una transición suave al color de fondo */
+}
+
+.content-table a {
+  color: #111;
+}
+
+.aNameProducto{
+  color: #111; 
+  text-decoration: none;
+}
+.aNameProducto:hover {
+  color: #c7a17a;
+  text-decoration: none;
+}
+
+.custom-a{
+  color: #111; 
+  text-decoration: none;
+}
+.custom-a:hover{
+  color: #c7a17a;
+  text-decoration: none;
+}
+
+.custom-a:active{
+  color: #c7a17a;
+  text-decoration: none;
+}
+
+.list-group-item {
+  color: #111; /* Cambia el color del texto de las etiquetas */
+}
+
+.list-group-item:hover {
+  background-color: #e0e0e0; /* Color de fondo al pasar el ratón (hover) */
+  color: #000;
+}
+
+.list-group-item.active {
+  background-color: #c7a17a; /* Cambia el color de fondo del elemento activo */
+  border-color: #c7a17a;
+  color: #ffffff; /* Cambia el color del texto del elemento activo */
+}
+
+.large-checkbox {
+  width: 15px;  /* Ancho del checkbox */
+  height: 15px; /* Alto del checkbox */
+  margin: 0;    /* Margen para centrar mejor si es necesario */
+  transform: scale(1.5); /* Escala el checkbox */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+}
+
+
 /*# sourceMappingURL=ui.css.map */
