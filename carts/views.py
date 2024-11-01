@@ -159,3 +159,52 @@ def cart(request, total=0, cantidad=0, cart_items=None):
     }
 
     return render(request, 'store/cart.html', context)
+
+
+def checkout(request, total=0, cantidad=0, cart_items=None):
+    iva = 0 
+    grand_total = 0    
+    
+    try:
+        cart = Cart.objects.get(cart_id=_cart_id(request))
+        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+
+        for cart_item in cart_items:
+            # Verifica si el cart_item tiene variantes asociadas
+            if cart_item.variantes.exists():
+                variante = cart_item.variantes.first()  # Obtiene la primera variante
+
+                # Aplica la lógica en función del valor de la variante
+                if variante.variante_value == 'Estandar':
+                    total += cart_item.producto.precio * cart_item.cantidad
+                elif variante.variante_value == 'Grande':
+                    total += (cart_item.producto.precio + variante.variante_precio) * cart_item.cantidad
+                elif variante.variante_value == 'Pequeño':
+                    # Si es 'Pequeño', solo usa el precio base del producto
+                    total += (cart_item.producto.precio - variante.variante_precio) * cart_item.cantidad
+                else:
+                    total += cart_item.producto.precio * cart_item.cantidad
+            else:
+                # Si no tiene variantes, usa el precio base del producto
+                total += cart_item.producto.precio * cart_item.cantidad
+
+            # Aumenta la cantidad total de productos
+            cantidad += cart_item.cantidad
+
+        # Calcula el IVA y el total general
+        iva = (19 * total) / 100
+        grand_total = total + iva
+
+    except ObjectDoesNotExist:
+        pass  # Ignorar si no existe el carrito
+
+    # Preparar el contexto para pasar al template
+    context = {
+        'total': total,
+        'cantidad': cantidad,
+        'cart_items': cart_items,
+        'iva': iva,
+        'grand_total': grand_total,
+    }
+
+    return render(request, 'store/checkout.html', context)
