@@ -22,7 +22,8 @@
                     <!-- Sección de Dirección de Envío, que se oculta al seleccionar "Retiro en tienda" -->
                     <div id="deliveryForm">
                         <h4 class="card-title mb-4">Dirección de Envio</h4>
-                        <form action="">
+                        <form action="" method="POST">
+                            {% csrf_token %}
                             <div class="form-row">
                                 <div class="col form-group">
                                     <label for="">Nombre:</label>
@@ -65,7 +66,7 @@
                                 <label for="">Notas del pedido:</label>
                                 <textarea name="order_note" rows="2" class="form-control" style="resize: none; max-height: 100px;"></textarea>
                             </div>
-                        </form>
+                        
                     </div>
 
                     <!-- Mensaje para Retiro en tienda -->
@@ -120,8 +121,9 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    <a href="./place-order.html" class="btn btn-primary btn-block custom-button">Pagar</a>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block custom-button">Pagar</button>
                     <a href="{% url 'store' %}" class="btn btn-light btn-block custom-rounded-btn">Continuar Comprando</a>
+                </form>
                 </div> <!-- card-body.// -->
             </div> <!-- card.// -->
         </aside> <!-- col.// -->
