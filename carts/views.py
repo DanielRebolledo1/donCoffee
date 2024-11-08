@@ -186,9 +186,9 @@ def remove_cart_item(request, producto_id, cart_item_id):
     
     
 def cart(request, total=0, cantidad=0, cart_items=None):
-    iva = 0 
-    grand_total = 0    
-    
+    iva = 0
+    grand_total = 0
+    subtotal = 0
     try:
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
@@ -220,7 +220,8 @@ def cart(request, total=0, cantidad=0, cart_items=None):
 
         # Calcula el IVA y el total general
         iva = (19 * total) / 100
-        grand_total = total + iva
+        grand_total = total
+        subtotal = total - iva
 
     except ObjectDoesNotExist:
         pass  # Ignorar si no existe el carrito
@@ -232,6 +233,7 @@ def cart(request, total=0, cantidad=0, cart_items=None):
         'cart_items': cart_items,
         'iva': iva,
         'grand_total': grand_total,
+        'subtotal': subtotal,
     }
 
     return render(request, 'store/cart.html', context)
@@ -239,8 +241,9 @@ def cart(request, total=0, cantidad=0, cart_items=None):
 
 @login_required(login_url='login')
 def checkout(request, total=0, cantidad=0, cart_items=None):
-    iva = 0 
-    grand_total = 0    
+    iva = 0
+    grand_total = 0
+    subtotal = 0
     
     try:
         if request.user.is_authenticated:
@@ -274,7 +277,8 @@ def checkout(request, total=0, cantidad=0, cart_items=None):
 
         # Calcula el IVA y el total general
         iva = (19 * total) / 100
-        grand_total = total + iva
+        grand_total = total
+        subtotal = total - iva
 
     except ObjectDoesNotExist:
         pass  # Ignorar si no existe el carrito
@@ -286,6 +290,7 @@ def checkout(request, total=0, cantidad=0, cart_items=None):
         'cart_items': cart_items,
         'iva': iva,
         'grand_total': grand_total,
+        'subtotal': subtotal,
     }
 
     return render(request, 'store/checkout.html', context)

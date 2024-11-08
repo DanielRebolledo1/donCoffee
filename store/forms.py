@@ -33,7 +33,7 @@ class ProductoForm(forms.ModelForm):
         self.fields['disponible'].widget.attrs['style'] = "margin-left: 20px" 
         
     # def clean_nombre_producto(self):
-    #     nombre_producto = self.cleaned_data.get('nombre_producto')
-    #     if Producto.objects.filter(nombre_producto=nombre_producto).exists():
-    #         raise forms.ValidationError(f'Ya existe un producto con el nombre "{nombre_producto}".')
-    #     return nombre_producto
+    #      nombre_producto = self.cleaned_data.get('nombre_producto')
+    #      if Producto.objects.filter(nombre_producto=nombre_producto).exists():
+    #          raise forms.ValidationError(f'Ya existe un producto con el nombre "{nombre_producto}".')
+    #      return nombre_producto

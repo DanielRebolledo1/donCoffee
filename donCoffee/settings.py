@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'carts',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'doncoffee17@gmail.com'
 EMAIL_HOST_PASSWORD = 'hivw tuua khne ellx'
 EMAIL_PORT = 587
+
+# settings.py
+TRANSBANK_COMMERCE_CODE = '597055555532'  # Código de comercio de prueba para Webpay Plus
+TRANSBANK_API_KEY = '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C'  # Llave API de Transbank
+TRANSBANK_ENVIRONMENT = 'integration'  # Cambia a 'PRODUCTION' en producción
+
