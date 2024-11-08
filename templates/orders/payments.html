@@ -102,11 +102,11 @@
                     <p class="text-center mb-3">
                         <img src="{% static './images/misc/payments.png' %}" height="26">
                     </p>
-                    <form action="{% url 'payments' %}" method="post">
+                    <form action="{% url 'payments' %}" method="post" class="d-flex justify-content-center align-items-center">
                         {% csrf_token %}
                         <input type="hidden" name="num_pedido" value="{{pedido.num_pedido}}">
                         <input type="hidden" name="total_pedido" value="{{pedido.total_pedido|floatformat:0}}">
-                        <button type="submit" class="btn btn-primary">Pagar con Transbank</button>
+                        <button type="submit" class="btn btn-primary custom-button"><i class="far fa-credit-card"></i> Pagar con Transbank</button>
                     </form>
                 </div> <!-- card-body.// -->
             </div> <!-- card.// -->
