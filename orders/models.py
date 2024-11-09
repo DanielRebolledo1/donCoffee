@@ -55,7 +55,7 @@ class Pedido_producto(models.Model):
     pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, blank=True, null=True)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    variante = models.ForeignKey(Variante, on_delete=models.CASCADE)
+    variantes = models.ManyToManyField(Variante, blank=True)
     cantidad = models.IntegerField()
     precio_producto = models.FloatField()
     ordered = models.BooleanField(default=False)

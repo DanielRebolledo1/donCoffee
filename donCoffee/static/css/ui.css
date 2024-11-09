@@ -450,6 +450,10 @@ header .logo span {
   color: #c7a17a;
 }
 
+.custom-span{
+  color: #c7a17a!important;
+}
+
 .brand-wrap .logo, .navbar-brand .logo {
   margin-right: 7px;
   max-height: 42px;
@@ -840,7 +844,7 @@ footer {
 .custom-button:hover {
     background-color: #b08e69 !important; 
     border-color: #b08e69 !important;
-    color: white;
+    color: white !important;
 }
 
  .custom-button:focus {

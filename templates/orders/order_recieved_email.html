@@ -1,0 +1,165 @@
+{% autoescape off %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Estilos básicos en línea para mejorar la compatibilidad */
+        body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f5;
+    }
+    .email-container {
+        width: 100%;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        max-width: 600px;
+        margin: 30px auto;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+    }
+    .header {
+        background-color: #c7a17a;
+        color: #ffffff;
+        padding: 15px;
+        text-align: center;
+        font-size: 26px;
+        font-weight: bold;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+    .order-details, .customer-details {
+        padding: 20px;
+        margin-top: 15px;
+        color: #5a5a5a;
+    }
+    .order-details h4, .customer-details h4 {
+        font-size: 18px;
+        color: #c7a17a;
+        border-bottom: 2px solid #c7a17a;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+    }
+    .footer {
+        text-align: center;
+        padding: 15px;
+        color: #888888;
+        font-size: 12px;
+        background-color: #f8f8f5;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+        border-top: 1px solid #e0e0e0;
+    }
+    .btn {
+        background-color: #c7a17a;
+        color: white;
+        padding: 12px 25px;
+        text-decoration: none;
+        border-radius: 8px;
+        display: inline-block;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+    .btn:hover {
+        background-color: #a6835d;
+    }
+    .table-header {
+        background-color: #f1e9e1;
+        text-align: center;
+        font-weight: bold;
+        color: #c7a17a;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    .table th, .table td {
+        padding: 12px;
+        border: 1px solid #dddddd;
+        text-align: center;
+        font-size: 14px;
+    }
+    .table th {
+        background-color: #f4f2ed;
+        color: #555555;
+        font-weight: bold;
+    }
+    .totals {
+        font-weight: bold;
+        color: #5a5a5a;
+        text-align: right;
+    }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">Confirmación de Pedido</div>
+
+    <p>Hola {{ user.first_name }},</p>
+    <p>Gracias por tu compra en Don Coffee! Tu pedido ha sido procesado exitosamente.</p>
+    
+    <div class="customer-details">
+        <h4>Factura a</h4>
+        <p><strong>{{ pedido.full_name }}</strong><br>
+        {{ pedido.email }}<br>
+        {{ pedido.direccion }}, {{ pedido.ciudad }}</p>
+    </div>
+
+    <div class="order-details">
+        <h4>Detalles del Pedido</h4>
+        <p><strong>Número de pedido:</strong> {{ pedido.num_pedido }}</p>
+        <p><strong>Transacción:</strong> {{ pago.pago_id }}</p>
+        <p><strong>Fecha del pedido:</strong> {{ pedido.created_at }}</p>
+        <p><strong>Estado:</strong> {{ pedido.estado }}</p>
+    </div>
+
+    <h4>Resumen de Productos</h4>
+    <table class="table">
+        <thead>
+            <tr class="table-header">
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in productos_pedido %}
+            <tr>
+                <td>{{ item.producto.nombre_producto }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>${{ item.precio_producto|floatformat:0 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2"><strong>Sub Total:</strong></td>
+                <td>${{ pedido.subtotal|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>IVA:</strong></td>
+                <td>${{ pedido.iva|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Total a Pagar:</strong></td>
+                <td>${{ pedido.total_pedido|floatformat:0 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <p class="text-center">Gracias por confiar en nosotros!</p>
+    
+    <div class="footer">
+        <p>Don Coffee<br>Quillota, Chile</p>
+        <p>Para cualquier consulta, contáctanos en <a href="mailto:doncoffee17@gmail.com">soporte@doncoffee.cl</a></p>
+    </div>
+</div>
+</body>
+</html>
+{% endautoescape %}

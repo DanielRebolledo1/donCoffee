@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container text-center" style="margin-top: 50px;">
+    <i class="fas fa-times-circle" style="font-size: 72px; color: #dc3545; margin-bottom: 20px;"></i>
+    <h2>Pago Rechazado</h2>
+    <p>{{ mensaje }}</p>
+    <a href="{% url 'checkout' %}" class="btn btn-primary custom-button">Intentar Nuevamente</a>
+</div>
+{% endblock %}

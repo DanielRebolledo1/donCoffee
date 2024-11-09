@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Producto, Variante
+from .models import Producto, Variante, ReviewRating
 
 # Register your models here.
 
@@ -11,6 +11,8 @@ class VarianteAdmin(admin.ModelAdmin):
     list_display = ('producto', 'variante_categoria','variante_precio', 'variante_value', 'is_active')
     list_editable = ('is_active',)
     list_filter = ('producto', 'variante_categoria', 'variante_value')
+
     
 admin.site.register(Producto, ProductoAdmin)
 admin.site.register(Variante, VarianteAdmin)
+admin.site.register(ReviewRating)
