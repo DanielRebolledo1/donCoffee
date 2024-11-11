@@ -172,6 +172,7 @@ def order_complete(request):
         message = render_to_string('orders/order_recieved_email.html', {
             'user': request.user,
             'pedido': pedido,
+            'pago': pago,
             'productos_pedido': productos_pedido,  # Pasamos los productos al contexto
         })
         to_email = request.user.email
