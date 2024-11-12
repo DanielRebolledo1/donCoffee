@@ -1763,6 +1763,14 @@ a.crearCuenta:hover {
   text-decoration: none; /* Subrayar el enlace al hacer hover (opcional) */
 }
 
+.text-left a{
+  color: #c7a17a; /* Color personalizado del enlace */
+  text-decoration: none; /* Remover el subrayado */
+}
+.text-left a:hover{
+  color: #8c6f45; /* Color personalizado del enlace */
+  text-decoration: none; /* Remover el subrayado */
+}
 
 
 /* ================== PAGES =================== */

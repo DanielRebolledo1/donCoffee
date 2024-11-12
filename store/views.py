@@ -5,8 +5,9 @@ from django.contrib import messages
 from category.models import Categoria
 from carts.models import CartItem
 from carts.views import _cart_id
-from .models import Producto
-from .forms import ProductoForm
+from .models import Producto, ReviewRating
+from orders.models import Pedido_producto
+from .forms import ProductoForm, ReviewForm
 from django.contrib.auth.decorators import user_passes_test
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -45,12 +46,50 @@ def product_detail(request,categoria_slug, producto_slug):
     except Exception as e:
         raise e
 
+    if request.user.is_authenticated:
+        try:
+            orderproduct = Pedido_producto.objects.filter(user = request.user, producto_id = single_product.id).exists()
+            
+        except Pedido_producto.DoesNotExist:
+            orderproduct = None
+    else:
+        orderproduct = None
+    #get the reviews
+    reviews = ReviewRating.objects.filter(producto_id = single_product.id, status = True)
+    
+    # Calcular el promedio de reseñas
+    average_review = single_product.averageReview()
+    # Calculamos el número de estrellas
+    full_stars = int(average_review)  # Número de estrellas completas
+    half_star = 1 if average_review - full_stars >= 0.5 else 0  # Si hay media estrella
+    empty_stars = 5 - full_stars - half_star  # Estrellas vacías
+
+    # Generamos la lista de clases de estrellas
+    stars = (['fas fa-star'] * full_stars + 
+             ['fas fa-star-half-alt'] * half_star + 
+             ['far fa-star'] * empty_stars)
+
+
+    for review in reviews:
+        full_stars = int(review.rating)  # Número de estrellas completas
+        half_star = 1 if review.rating - full_stars >= 0.5 else 0  # Si hay media estrella
+        empty_stars = 5 - full_stars - half_star  # Estrellas vacías
+
+        # Genera una lista con las clases de icono para cada estrella
+        review.stars = (['fas fa-star'] * full_stars + 
+                        ['fas fa-star-half-alt'] * half_star + 
+                        ['far fa-star'] * empty_stars)
+        
     context = {
         'single_product': single_product,
         'in_cart': in_cart,
+        'orderproduct': orderproduct,
+        'reviews': reviews,
+        'average_review': average_review,
+        'stars': stars,
     }
+    
     return render(request, 'store/product_detail.html', context)
-
 
 
 def search(request):
@@ -123,3 +162,33 @@ def producto_delete(request, pk):
         messages.success(request, 'Producto eliminado exitosamente')
         return redirect('producto_list')
     return render(request, 'administrator/producto_confirm_delete.html', {'producto': producto})
+
+
+def submit_review(request, producto_id):
+    url = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        try:
+            reviews = ReviewRating.objects.get(user__id = request.user.id, producto__id = producto_id)
+            form = ReviewForm(request.POST, instance=reviews)
+            
+            form.save()
+            messages.success(request, 'Gracias!, Su reseña ha sido actualizada')
+            
+            return redirect(url)
+            
+        except ReviewRating.DoesNotExist:
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                data = ReviewRating()
+                
+                data.subject = form.cleaned_data['subject']
+                data.review = form.cleaned_data['review']
+                data.rating = form.cleaned_data['rating']
+                data.ip = request.META.get('REMOTE_ADDR')
+                data.producto_id = producto_id
+                data.user_id = request.user.id
+                data.save()
+                
+                messages.success(request, 'Gracias!, Su reseña se ha guardado con éxito')
+                
+                return redirect(url)

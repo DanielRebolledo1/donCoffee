@@ -1,5 +1,5 @@
 from django import forms
-from .models import Producto
+from .models import Producto, ReviewRating
 
 class ProductoForm(forms.ModelForm):
     class Meta:
@@ -37,3 +37,8 @@ class ProductoForm(forms.ModelForm):
     #      if Producto.objects.filter(nombre_producto=nombre_producto).exists():
     #          raise forms.ValidationError(f'Ya existe un producto con el nombre "{nombre_producto}".')
     #      return nombre_producto
+    
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = ReviewRating
+        fields = ['subject', 'review', 'rating']

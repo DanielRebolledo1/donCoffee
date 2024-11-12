@@ -1,0 +1,51 @@
+/* Ocultar los inputs */
+.rate > input {
+    display: none;
+}
+
+/* Estilos generales de la tasa */
+.rate {
+    display: inline-block;
+    border: 0;
+}
+
+/* Estilos de las etiquetas de las estrellas */
+.rate > label {
+    float: right;
+}
+
+/* Códigos actualizados para Font Awesome 5 */
+.rate > label::before {
+    display: inline-block;
+    font-size: 2.2rem;
+    font-family: "Font Awesome 5 Free"; /* Asegúrate de usar la fuente de la versión 5 */
+    font-weight: 900; /* Necesario para los iconos sólidos en la versión 5 */
+    content: "\f005"; /* Código de la estrella sólida en Font Awesome 5 */
+    margin: 0;
+    padding: 0.3rem .2rem;
+    cursor: pointer;
+}
+
+/* Estilo para la estrella media */
+.rate .half::before {
+    content: "\f089"; /* Código de la estrella media en Font Awesome 5 */
+    position: absolute;
+    padding-right: 0;
+}
+
+/* Estilos para cuando la estrella es seleccionada */
+input:checked ~ label, label:hover ~ label {
+    color: #ffb503;
+}
+
+/* Estilos para el hover y la selección de estrellas */
+input:checked + label:hover, 
+input:checked ~ label:hover, 
+input:checked ~ label:hover ~ label,
+label:hover ~ input:checked ~ label {
+    color: #cc9000;
+}
+
+.rating-star i{
+    color: #ffb503;
+}

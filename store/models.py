@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.urls import reverse
+from django.db.models import Avg, Count
 
 from category.models import Categoria
 from accounts.models import Account
@@ -33,6 +34,19 @@ class Producto(models.Model):
     def __str__(self):
         return str(self.nombre_producto)
 
+    def averageReview(self):
+        # Calcular el promedio de las reseñas para este producto
+        reviews = self.reviews.aggregate(average=Avg('rating'))
+        if reviews['average'] is not None:
+            return reviews['average']
+        return 0  # Retorna 0 si no hay reseñas
+    
+    def countReview(self):
+        reviews = ReviewRating.objects.filter(producto = self, status = True).aggregate(count = Count('id'))
+        count = 0
+        if reviews['count'] is not None:
+            count = int(reviews['count'])
+        return count
 
 
 class VarianteManager(models.Manager):
@@ -68,7 +82,7 @@ class Variante(models.Model):
         return str(self.variante_value)
     
 class ReviewRating(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto,related_name='reviews', on_delete=models.CASCADE)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     subject = models.CharField(max_length=100, blank=True)
     review = models.TextField(max_length=500, blank=True)
@@ -77,6 +91,9 @@ class ReviewRating(models.Model):
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Manager explícito
+    objects = models.Manager()
     
     def __str__(self):
         return str(self.subject)

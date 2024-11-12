@@ -12,4 +12,5 @@ urlpatterns = [
     path('admin/productos/editar/<int:pk>/', views.producto_update, name='producto_update'),
     path('admin/productos/eliminar/<int:pk>/', views.producto_delete, name='producto_delete'),
     
+    path('submit_review/<int:producto_id>', views.submit_review, name='submit_review')
 ] 
