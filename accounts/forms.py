@@ -1,5 +1,5 @@
 from django import forms
-from .models import Account
+from .models import Account, UserProfile
 
 
 class RegistrationForm(forms.ModelForm):
@@ -45,5 +45,27 @@ class RegistrationForm(forms.ModelForm):
         self.fields['last_name'].widget.attrs['placeholder'] = 'Ingresar Apellido'
         self.fields['phone_number'].widget.attrs['placeholder'] = 'Ingresar Número de teléfono'
         self.fields['email'].widget.attrs['placeholder'] = 'Ingresar email'
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ('first_name', 'last_name', 'phone_number')
+        
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+class UserProfileForm(forms.ModelForm):
+    profile_picture = forms.ImageField(required=False, error_messages={'Error':('Solo archivos de imagen')}, widget=forms.FileInput)
+    class Meta:
+        model = UserProfile
+        fields = ('direccion', 'ciudad', 'profile_picture')
+        
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
