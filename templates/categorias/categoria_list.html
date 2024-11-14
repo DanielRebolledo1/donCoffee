@@ -12,10 +12,11 @@
                 <ul class="list-group">
                     <a class="list-group-item" href="{% url 'producto_list' %}"> Productos </a>
                     <a class="list-group-item active" href="{% url 'categoria_list' %}"> Categorías </a>
-                    <a class="list-group-item" href="#"> Return and refunds </a>
+                    <a class="list-group-item" href="{% url 'pedido_list' %}">Pedidos</a>
                 </ul>
                 <br>
                 <a class="btn btn-light btn-block" href="{% url 'categoria_create' %}"><i class="fas fa-plus-circle"></i> <span class="text">Crear nueva categoría</span> </a> 
+                <a class="btn btn-light btn-block" href="{% url 'dashboard' %}"><i class="fa fa-mug-hot"></i> <span class="text">Perfil</span></a>
             </aside>
             <main class="col-md-9">
                 <article class="card">

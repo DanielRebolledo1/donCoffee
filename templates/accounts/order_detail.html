@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container" style="margin: 0 auto;width: 50%;padding: 50px;background: #f1f1f1;margin-top: 50px;margin-bottom: 50px;">
+    <div class="row invoice row-printable">
+        <div class="col-md-12">
+            <!-- col-lg-12 start here -->
+            <div class="panel panel-default plain" id="dash_0">
+                <!-- Start .panel -->
+                <div class="panel-body p30">
+                    <div class="row">
+                        <!-- Start .row -->
+                        <div class="col-lg-6">
+                            <!-- col-lg-6 start here -->
+                            <div class="invoice-logo"><img src="{% static '/images/logodoncoffee.png'%}" alt="Invoice logo" style="max-height: 40px;"></div>
+                        </div>
+                        <!-- col-lg-6 end here -->
+                        <div class="col-lg-6">
+                            <!-- col-lg-6 start here -->
+                            <div class="invoice-from">
+                                <ul class="list-unstyled text-right">
+                                    <li><strong>Detalle de pedido</strong></li>
+                                    <li>{{order.full_name}}</li>
+                                    <li>{{order.email}}</li>
+                                    <li>{{order.direccion}}</li>
+                                    <li>{{order.ciudad}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- col-lg-6 end here -->
+                        <div class="col-lg-12">
+                            <!-- col-lg-12 start here -->
+                            <div class="invoice-details mt25">
+                                <div class="well">
+                                    <ul class="list-unstyled mb0">
+                                        <li><strong>Numero de pedido:</strong> {{order.num_pedido}}</li>
+                                        <li><strong>Transacción:</strong> {{order.pago.pago_id}}</li>
+                                        <li><strong>Fecha del pedido:</strong> {{order.created_at}}</li>
+                                        <li><strong>Estado:</strong> {{order.estado}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                           
+                            <div class="invoice-items">
+                                <div class="table-responsive" style="overflow: hidden; outline: none;" tabindex="0">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="per70 text-center">Productos</th>
+                                                <th class="per5 text-center">Cantidad</th>
+                                                <th class="per25 text-center">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in order_detail %}
+                                            <tr>
+                                                <td>{{item.producto.nombre_producto}}</td>
+                                                <td class="text-center">{{item.cantidad}}</td>
+                                                <td class="text-center">{{item.precio_producto|floatformat:0}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="2" class="text-right">Sub Total:</th>
+                                                <th class="text-center">${{order.subtotal|floatformat:0}}</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="2" class="text-right">Iva:</th>
+                                                <th class="text-center">${{order.iva|floatformat:0}}</th>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <th colspan="2" class="text-right">Total a Pagar:</th>
+                                                <th class="text-center">${{order.total_pedido|floatformat:0}}</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="invoice-footer mt25">
+                                <p class="text-center">Gracias por realizar tu pedido con nosotros :) ! </p>
+                            </div>
+                        </div>
+                        <!-- col-lg-12 end here -->
+                    </div>
+                    <!-- End .row -->
+                </div>
+            </div>
+            <!-- End .panel -->
+        </div>
+        <!-- col-lg-12 end here -->
+    </div>
+    </div>
+{% endblock %}

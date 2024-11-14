@@ -22,14 +22,14 @@
                             <div class="card-body">
                                 <h5 class="card-tittle">Total de pedidos</h5>
                                 <h4>{{orders_count}}</h4>
-                                <p class="text-center"><span><a href="" class="custom-a">Ver pedidos</a></span></p>
+                                <p class="text-center"><span><a href="{% url 'my_orders' %}" class="custom-a">Ver pedidos</a></span></p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="card" style="text-align: center;">
                             <div class="card-body">
-                                <img src="https://www.w3schools.com/howto/img_avatar.png" alt="User Profile Picture" width="50" height="50" style="border-radius: 50%;">
+                                <img src="{{userprofile.profile_picture.url}}" width="50" height="50" style="border-radius: 50%;">
                                 <p class="mb-0">{{user.email}}</p>
                                 <p>{{user.phone_number}}</p>
                             </div>

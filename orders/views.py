@@ -1,12 +1,16 @@
 import datetime
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 from transbank.webpay.webpay_plus.transaction import Transaction
 from transbank.common.integration_api_keys import IntegrationApiKeys
@@ -201,39 +205,51 @@ def order_complete(request):
     return redirect('home')
 
 
-def pruebaparadiseño(request):
-    return render(request, 'orders/order_complete.html')
+# Verifica si el usuario es administrador
+def es_administrador(user):
+    return user.is_staff
+
+@user_passes_test(es_administrador)
+def pedido_list(request):
+    query = request.GET.get('q')  # Captura el término de búsqueda
+
+    # Filtra los pedidos por el número si se ha ingresado un término de búsqueda
+    if query:
+        pedidos = Pedido.objects.filter(Q(num_pedido__icontains=query))
+    else:
+        pedidos = Pedido.objects.all()
+
+    # Ordena y pagina los resultados
+    pedidos = pedidos.order_by('-created_at')
+    paginator = Paginator(pedidos, 10)
+    page = request.GET.get('page')
+    try:
+        pedidos = paginator.page(page)
+    except PageNotAnInteger:
+        pedidos = paginator.page(1)
+    except EmptyPage:
+        pedidos = paginator.page(paginator.num_pages)
+
+    return render(request, 'accounts/order_admin.html', {'pedidos': pedidos, 'query': query})
 
 
-#Codigo antiguo
-# def order_complete(request):
-#     token = request.GET.get('token_ws')
-#     if not token:
-#         return redirect('home')
+@user_passes_test(es_administrador)
+def pedido_update_estado(request, pedido_id):
+    if request.method == 'POST':
+        pedido = get_object_or_404(Pedido, id=pedido_id)
+        nuevo_estado = request.POST.get('estado')
+        if nuevo_estado in dict(pedido.ESTADO):  # Asegura que el nuevo estado es válido
+            pedido.estado = nuevo_estado
+            pedido.save()
+            messages.success(request, 'Estado del pedido actualizado correctamente.')
+        else:
+            messages.error(request, 'Estado inválido.')
+    return redirect('pedido_list')
 
-#     tx = Transaction(
-#         WebpayOptions(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, IntegrationType.TEST))
-#     resp = tx.status(token)
 
-#     pedido = Pedido.objects.get(user=request.user, is_ordered=False, num_pedido=resp['buy_order'])
-
-#     pago = Pago()
-#     pago.pago_id = token
-#     pago.metodo_pago = 'Webpay'
-#     pago.monto_pagado = resp['amount']
-#     pago.estado = resp['vci']
-#     pago.user = request.user
-#     pago.save()
-
-#     pedido.pago = pago
-#     pedido.is_ordered = True
-#     pedido.save()
-
-#     if resp['vci'] == 'TSY':
-#         context = {
-#             pedido: pedido,
-#             pago: pago
-#         }
-
-#         return render(request, 'orders/order_complete.html', context)
-#     return render(request, 'orders/order_complete.html')
+@user_passes_test(es_administrador)
+def pedido_delete(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    pedido.delete()
+    messages.success(request, 'Pedido eliminado correctamente.')
+    return redirect('pedido_list')

@@ -30,7 +30,7 @@
                             <tbody>
                                 {% for order in orders %}
                               <tr>
-                                <th scope="row">{{order.num_pedido}}</th>
+                                <th scope="row"><a href="{% url 'order_detail' order.num_pedido%}">{{order.num_pedido}}</a></th>
                                 <td>{{order.full_name}}</td>
                                 <td>{{order.phone}}</td>
                                 <td>${{order.total_pedido|floatformat:0}}</td>

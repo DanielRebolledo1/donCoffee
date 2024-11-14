@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section-conten padding-y bg">
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+        <div class="row">
+            <aside class="col-md-3">
+                <h2 class="fs-3">Administrador Web</h2>
+                <ul class="list-group">
+                    <a class="list-group-item" href="{% url 'producto_list' %}">Productos</a>
+                    <a class="list-group-item" href="{% url 'categoria_list' %}">Categorías</a>
+                    <a class="list-group-item active" href="{% url 'pedido_list' %}">Pedidos</a>
+                </ul>
+                <br>
+                <a class="btn btn-light btn-block" href="{% url 'dashboard' %}"><i class="fa fa-mug-hot"></i> <span class="text">Perfil</span></a>
+            </aside>
+            <main class="col-md-9">
+                <article class="card">
+                    <header class="card-header">
+                        <strong class="d-inline-block mr-3">Lista de Pedidos</strong>
+                    </header>
+
+                    <!-- Campo de Búsqueda -->
+                    <form method="get" action="{% url 'pedido_list' %}" class="mt-3 mb-3">
+                        <div class="input-group col-md-6 mx-auto">
+                            <input type="text" name="q" class="form-control" placeholder="Buscar por número de pedido" value="{{ query }}">
+                            <button class="btn btn-outline-primary btn-search" type="submit"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Pedido #</th>
+                                    <th>Usuario</th>
+                                    <th>Estado</th>
+                                    <th>Modificar Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pedido in pedidos %}
+                                <tr>
+                                    <td>{{ pedido.num_pedido }}</td>
+                                    <td>{{ pedido.user.username }}</td>
+                                    <td>{{ pedido.estado }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'pedido_update_estado' pedido.id %}">
+                                            {% csrf_token %}
+                                            <select name="estado" class="form-select">
+                                                {% for estado in pedido.ESTADO %}
+                                                    <option value="{{ estado.0 }}" {% if pedido.estado == estado.0 %}selected{% endif %}>{{ estado.1 }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn btn-primary custom-rounded-btn"><i class="fas fa-wrench"></i>Actualizar</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <!-- Botón para abrir el modal -->
+                                        <button type="button" class="btn btn-danger custom-rounded-btn" data-toggle="modal" data-target="#confirmDeleteModal{{ pedido.id }}">
+                                            <i class="fa fa-trash"></i> Eliminar
+                                        </button>
+
+                                        <!-- Modal de Confirmación -->
+                                        <div class="modal fade" id="confirmDeleteModal{{ pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmDeleteLabel">Confirmar Eliminación</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>¿Estás seguro de que quieres eliminar el pedido <strong>#{{ pedido.num_pedido }}</strong>?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <!-- Formulario para eliminar el pedido -->
+                                                        <form method="post" action="{% url 'pedido_delete' pedido.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                        </form>
+                                                        <!-- Botón de cancelar -->
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5">No se encontraron pedidos.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                <!-- Paginación -->
+                <nav class="mt-4" aria-label="Page navigation sample">
+                    {% if pedidos.has_other_pages %}
+                        <ul class="pagination justify-content-center">
+                            {% if pedidos.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ pedidos.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+                            {% endif %}
+
+                            {% for i in pedidos.paginator.page_range %}
+                                {% if pedidos.number == i %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if pedidos.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ pedidos.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Siguiente</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </nav>
+                </article>
+            </main>
+        </div>
+    </div>
+</section>
+{% endblock %}
