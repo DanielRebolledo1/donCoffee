@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from django.contrib.messages import constants as messages
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%jgh92k-!bys&1ih+y-(gi48!0)(q=za1jfvtppqn23s&6y37n'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG',default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -115,12 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-#LANGUAGE_CODE = 'es-cl'
-# USE_L10N = True
-# USE_THOUSAND_SEPARATOR = True
-# THOUSAND_SEPARATOR = '.'
-# DECIMAL_SEPARATOR = ','
-# NUMBER_GROUPING = 3
 
 TIME_ZONE = 'UTC'
 
@@ -153,14 +148,13 @@ MESSAGE_TAGS = {
     messages.ERROR: "danger",
 }
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'doncoffee17@gmail.com'
-EMAIL_HOST_PASSWORD = 'hivw tuua khne ellx'
-EMAIL_PORT = 587
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
 
 # settings.py
-TRANSBANK_COMMERCE_CODE = '597055555532'  # Código de comercio de prueba para Webpay Plus
-TRANSBANK_API_KEY = '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C'  # Llave API de Transbank
-TRANSBANK_ENVIRONMENT = 'integration'  # Cambia a 'PRODUCTION' en producción
-
+TRANSBANK_COMMERCE_CODE = config('TRANSBANK_COMMERCE_CODE', cast=int)  # Código de comercio de prueba para Webpay Plus
+TRANSBANK_API_KEY = config('TRANSBANK_API_KEY')  # Llave API de Transbank
+TRANSBANK_ENVIRONMENT = config('TRANSBANK_ENVIRONMENT') # Cambia a 'PRODUCTION' en producción
