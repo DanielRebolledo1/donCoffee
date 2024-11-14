@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section-conten padding-y bg">
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+        <div class="row">
+            <aside class="col-md-3">
+                <h2 class="fs-3">Administrador Web</h2>
+                <ul class="list-group">
+                    <a class="list-group-item" href="{% url 'producto_list' %}">Productos</a>
+                    <a class="list-group-item" href="{% url 'categoria_list' %}">Categorías</a>
+                    <a class="list-group-item" href="{% url 'pedido_list' %}">Pedidos</a>
+                    <a class="list-group-item active" href="{% url 'pedidos_grafico' %}">Gráficos</a>
+                </ul>
+                <br>
+                <a class="btn btn-light btn-block" href="{% url 'dashboard' %}"><i class="fa fa-mug-hot"></i> <span class="text">Perfil</span></a>
+            </aside>
+            <main class="col-md-9">
+                <article class="card">
+                    <header class="card-header">
+                        <strong class="d-inline-block mr-3">Métricas de la cafetería online</strong>
+                    </header>
+                    <div class="p-3">
+                        <canvas id="productosGrafico"></canvas>
+                    </div>
+                    <br>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <strong>Total En Ventas</strong>
+                        </div>
+                        <div class="card-body text-center">
+                            <h4>${{ total_ventas|floatformat:0}}</h4>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <canvas id="ventasGrafico"></canvas>
+                    </div>
+                </article>
+            </main>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Gráfico de productos más comprados
+    var ctxProductos = document.getElementById('productosGrafico').getContext('2d');
+    var productosGrafico = new Chart(ctxProductos, {
+        type: 'bar',
+        data: {
+            labels: {{ productos|safe }},
+            datasets: [{
+                label: 'Cantidad de Compras',
+                data: {{ cantidades|safe }},
+                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Gráfico de ventas por día
+    var ctxVentas = document.getElementById('ventasGrafico').getContext('2d');
+    var ventasGrafico = new Chart(ctxVentas, {
+        type: 'line',
+        data: {
+            labels: {{ dias|safe }},
+            datasets: [{
+                label: 'Ventas por Día',
+                data: {{ ventas|safe }},
+                borderColor: 'rgba(255, 99, 132, 1)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

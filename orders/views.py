@@ -10,7 +10,11 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models.functions import TruncMonth, TruncDay
 from django.db.models import Q
+from django.db.models import Count, Sum, F
+from datetime import datetime as dt
+
 
 from transbank.webpay.webpay_plus.transaction import Transaction
 from transbank.common.integration_api_keys import IntegrationApiKeys
@@ -253,3 +257,45 @@ def pedido_delete(request, pedido_id):
     pedido.delete()
     messages.success(request, 'Pedido eliminado correctamente.')
     return redirect('pedido_list')
+
+
+def pedidos_grafico(request):
+    # Filtrar los pedidos que están en estado 'completado'
+    pedidos_completados = Pedido.objects.filter(estado='Completado')
+
+    # Contar la cantidad de veces que cada producto ha sido comprado, solo para los pedidos completados
+    productos_comprados = Pedido_producto.objects.filter(pedido__in=pedidos_completados) \
+        .values('producto_id') \
+        .annotate(total_compras=Sum('cantidad')) \
+        .order_by('-total_compras')[:10]  # Obtener los 10 productos más comprados
+
+    # Obtener los productos y las cantidades
+    productos = Producto.objects.filter(id__in=[producto['producto_id'] for producto in productos_comprados])
+    cantidades = [producto['total_compras'] for producto in productos_comprados]
+    nombres_productos = [producto.nombre_producto for producto in productos]
+
+    # Calcular el total de ventas correctamente (multiplicando el precio por la cantidad de productos)
+    total_ventas = Pedido_producto.objects.filter(pedido__in=pedidos_completados) \
+        .annotate(total_producto=F('precio_producto') * F('cantidad')) \
+        .aggregate(total_ventas=Sum('total_producto'))['total_ventas'] or 0
+
+    # Ventas por día, solo para los pedidos completados
+    ventas_por_dia = Pedido.objects.filter(estado='Completado') \
+                                  .annotate(day=TruncDay('created_at')) \
+                                  .values('day') \
+                                  .annotate(total_ventas=Sum('total_pedido')) \
+                                  .order_by('day')
+
+    dias = [venta['day'].strftime('%d %b %Y') for venta in ventas_por_dia]
+    ventas = [venta['total_ventas'] for venta in ventas_por_dia]
+
+    context = {
+        'productos': nombres_productos,       # Nombres de los productos
+        'cantidades': cantidades,             # Cantidades de compras
+        'total_ventas': total_ventas,         # Total de ventas
+        'dias': dias,                         # Fechas para el gráfico de ventas
+        'ventas': ventas,                     # Ventas por día
+    }
+
+    return render(request, 'accounts/grafico.html', context)
+
