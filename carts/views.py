@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import HttpResponse
 
 from store.models import Producto, Variante
@@ -252,9 +253,17 @@ def checkout(request, total=0, cantidad=0, cart_items=None):
             cart = Cart.objects.get(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
 
-
+        # Validar stock de los productos
         for cart_item in cart_items:
-            # Verifica si el cart_item tiene variantes asociadas
+            if cart_item.cantidad > cart_item.producto.stock:
+                messages.error(
+                    request,
+                    f"El producto '{cart_item.producto.nombre_producto}' no tiene suficiente stock. Disponible: {cart_item.producto.stock}."
+                )
+                return redirect('cart')
+
+        # Calcular totales
+        for cart_item in cart_items:
             if cart_item.variantes.exists():
                 variante = cart_item.variantes.first()  # Obtiene la primera variante
 
@@ -264,15 +273,12 @@ def checkout(request, total=0, cantidad=0, cart_items=None):
                 elif variante.variante_value == 'Grande':
                     total += (cart_item.producto.precio + variante.variante_precio) * cart_item.cantidad
                 elif variante.variante_value == 'Pequeño':
-                    # Si es 'Pequeño', solo usa el precio base del producto
                     total += (cart_item.producto.precio - variante.variante_precio) * cart_item.cantidad
                 else:
                     total += cart_item.producto.precio * cart_item.cantidad
             else:
-                # Si no tiene variantes, usa el precio base del producto
                 total += cart_item.producto.precio * cart_item.cantidad
 
-            # Aumenta la cantidad total de productos
             cantidad += cart_item.cantidad
 
         # Calcula el IVA y el total general
