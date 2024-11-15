@@ -91,26 +91,26 @@
 
 	
 <div class="row">
-    {% for producto_info in productos_con_estrellas %}
-    <div class="col-md-3">
-        <div class="card card-product-grid">
-            <a href="{{ producto_info.producto.get_url }}" class="img-wrap">
-                <img src="{{ producto_info.producto.imagen.url }}">
-            </a>
-            <figcaption class="info-wrap">
-                <a href="{{ producto_info.producto.get_url }}" class="title">{{ producto_info.producto.nombre_producto }}</a>
-                <div class="price mt-1">${{ producto_info.producto.precio }}</div>
-                
-                <!-- Mostrar las estrellas -->
-                <div class="rating-star">
-                    {% for star in producto_info.stars %}
-                        <i class="{{ star }}"></i>
-                    {% endfor %}
-                </div>
-            </figcaption>
-        </div>
-    </div> <!-- col.// -->
-    {% endfor %}
+	{% for producto_info in productos_con_estrellas %}
+	<div class="col-md-3">
+		<div class="card card-product-grid">
+			<a href="{{ producto_info.producto.get_url }}" class="img-wrap">
+				<img src="{{ producto_info.producto.imagen.url }}" alt="{{ producto_info.producto.nombre_producto }}">
+			</a>
+			<figcaption class="info-wrap">
+				<a href="{{ producto_info.producto.get_url }}" class="title">{{ producto_info.producto.nombre_producto }}</a>
+				<div class="price mt-1">${{ producto_info.producto.precio }}</div>
+
+				<!-- Mostrar las estrellas -->
+				<div class="rating-star">
+					{% for star in producto_info.stars %}
+						<i class="{{ star }}"></i>
+					{% endfor %}
+				</div>
+			</figcaption>
+		</div>
+	</div> <!-- col.// -->
+	{% endfor %}
 </div> <!-- row.// -->
 
 </div><!-- container // -->

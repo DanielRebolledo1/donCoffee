@@ -22,19 +22,57 @@
                         <strong class="d-inline-block mr-3">Métricas de la cafetería online</strong>
                     </header>
                     <div class="p-3">
+                        <h5 class="text-center">Productos más vendidos</h5>
                         <canvas id="productosGrafico"></canvas>
                     </div>
                     <br>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <strong>Total En Ventas</strong>
+                    <div class="p-3">
+                        <h5 class="text-center">Ventas por Día</h5>
+                        <canvas id="ventasGrafico"></canvas>
+                    </div>
+                    <!-- Gráfico de Ventas Mensuales -->
+                    <div class="p-3">
+                        <h5 class="text-center">Ventas Mensuales</h5>
+                        <canvas id="ventasMensualesGrafico"></canvas>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center">
+                        <!-- Card para el Total General -->
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header text-center">
+                                    <strong>Total General</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5>${{ total_ventas|floatformat:0 }}</h5>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body text-center">
-                            <h4>${{ total_ventas|floatformat:0}}</h4>
+                        <!-- Card para Ventas Mensuales -->
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header text-center">
+                                    <strong>Ventas Mensuales</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5>${{ total_ventas_mensuales|floatformat:0 }}</h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <br>
+                    <!-- Nuevo Gráfico: Ventas por Categoría -->
                     <div class="p-3">
-                        <canvas id="ventasGrafico"></canvas>
+                        <h5 class="text-center">Ventas por Categoría</h5>
+                        <div style="width: 60%; max-width: 800px; margin: auto;">
+                            <canvas id="categoriasGrafico"></canvas>
+                        </div>
+                    </div>
+                    <br>
+                    <!-- Gráfico Productos con Mayor Inventario vs. Ventas -->
+                    <div class="p-3">
+                        <h5 class="text-center">Productos con Mayor Inventario vs. Ventas</h5>
+                        <canvas id="productosInventarioGrafico"></canvas>
                     </div>
                 </article>
             </main>
@@ -77,6 +115,103 @@
                 label: 'Ventas por Día',
                 data: {{ ventas|safe }},
                 borderColor: 'rgba(255, 99, 132, 1)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Nuevo Gráfico: Ventas por Categoría
+    var ctxCategorias = document.getElementById('categoriasGrafico').getContext('2d');
+    var categoriasGrafico = new Chart(ctxCategorias, {
+        type: 'pie', // Cambiar a 'bar' para barras
+        data: {
+            labels: {{ nombres_categorias|safe }},
+            datasets: [{
+                label: 'Ventas por Categoría',
+                data: {{ ventas_categorias|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Ventas por Categoría'
+                }
+            }
+        }
+    });
+    // Datos para el gráfico de inventario vs. ventas
+    var ctxInventario = document.getElementById('productosInventarioGrafico').getContext('2d');
+    var inventarioGrafico = new Chart(ctxInventario, {
+        type: 'bar',
+        data: {
+            labels: {{ productos_inventario|safe }}, // Lista de nombres de productos
+            datasets: [
+                {
+                    label: 'Inventario',
+                    data: {{ cantidades_inventario|safe }}, // Cantidad de inventario por producto
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Ventas',
+                    data: {{ cantidades_ventas|safe }}, // Cantidad de ventas por producto
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    // Gráfico de ventas mensuales
+    var ctxMensuales = document.getElementById('ventasMensualesGrafico').getContext('2d');
+    var ventasMensualesGrafico = new Chart(ctxMensuales, {
+        type: 'line',
+        data: {
+            labels: {{ meses|safe }}, // Lista de meses
+            datasets: [{
+                label: 'Ventas Mensuales',
+                data: {{ ventas_totales|safe }}, // Total de ventas por mes
+                borderColor: 'rgba(54, 162, 235, 1)',
                 fill: false,
                 tension: 0.1
             }]

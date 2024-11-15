@@ -278,6 +278,22 @@ def pedidos_grafico(request):
     total_ventas = Pedido_producto.objects.filter(pedido__in=pedidos_completados) \
         .annotate(total_producto=F('precio_producto') * F('cantidad')) \
         .aggregate(total_ventas=Sum('total_producto'))['total_ventas'] or 0
+        
+        # Calcular total de ventas diarias
+    hoy = dt.now().date()
+    total_ventas_diarias = Pedido_producto.objects.filter(
+        pedido__in=pedidos_completados,
+        pedido__created_at__date=hoy
+    ).annotate(total_producto=F('precio_producto') * F('cantidad')) \
+        .aggregate(total_ventas=Sum('total_producto'))['total_ventas'] or 0
+
+    # Calcular total de ventas mensuales
+    mes_actual = dt.now().month
+    total_ventas_mensuales = Pedido_producto.objects.filter(
+        pedido__in=pedidos_completados,
+        pedido__created_at__month=mes_actual
+    ).annotate(total_producto=F('precio_producto') * F('cantidad')) \
+        .aggregate(total_ventas=Sum('total_producto'))['total_ventas'] or 0
 
     # Ventas por día, solo para los pedidos completados
     ventas_por_dia = Pedido.objects.filter(estado='Completado') \
@@ -289,13 +305,49 @@ def pedidos_grafico(request):
     dias = [venta['day'].strftime('%d %b %Y') for venta in ventas_por_dia]
     ventas = [venta['total_ventas'] for venta in ventas_por_dia]
 
+    # Productos más vendidos por categoría
+    ventas_por_categoria = Pedido_producto.objects.filter(pedido__in=pedidos_completados) \
+        .values('producto__categoria__nombre_categoria') \
+        .annotate(total_categoria=Sum(F('cantidad') * F('precio_producto'))) \
+        .order_by('-total_categoria')
+        
+    # Obtener los productos con mayor inventario y sus ventas
+    productos_inventario = Producto.objects.all().order_by('-stock')[:10]
+    productos_inventario_nombres = [producto.nombre_producto for producto in productos_inventario]
+    productos_inventario_cantidades = [producto.stock for producto in productos_inventario]
+    productos_ventas_cantidades = [
+        Pedido_producto.objects.filter(producto=producto).aggregate(total=Sum('cantidad'))['total'] or 0
+        for producto in productos_inventario
+]
+
+    nombres_categorias = [venta['producto__categoria__nombre_categoria'] for venta in ventas_por_categoria]
+    ventas_categorias = [venta['total_categoria'] for venta in ventas_por_categoria]
+    
+    # Calcular ventas mensuales
+    ventas_mensuales = pedidos_completados.annotate(month=TruncMonth('created_at')) \
+                                           .values('month') \
+                                           .annotate(total_ventas=Sum('total_pedido')) \
+                                           .order_by('month')
+
+    # Formatear los datos para el gráfico
+    meses = [venta['month'].strftime('%b %Y') for venta in ventas_mensuales]
+    ventas_totales = [venta['total_ventas'] for venta in ventas_mensuales]
+
     context = {
         'productos': nombres_productos,       # Nombres de los productos
         'cantidades': cantidades,             # Cantidades de compras
         'total_ventas': total_ventas,         # Total de ventas
         'dias': dias,                         # Fechas para el gráfico de ventas
         'ventas': ventas,                     # Ventas por día
+        'nombres_categorias': nombres_categorias,  # Nombres de las categorías
+        'ventas_categorias': ventas_categorias,    # Ventas por categoría
+        'total_ventas_diarias': total_ventas_diarias,
+        'total_ventas_mensuales': total_ventas_mensuales,
+        'productos_inventario': productos_inventario_nombres,
+        'cantidades_inventario': productos_inventario_cantidades,
+        'cantidades_ventas': productos_ventas_cantidades,
+        'meses': meses,
+        'ventas_totales': ventas_totales,
     }
 
     return render(request, 'accounts/grafico.html', context)
-

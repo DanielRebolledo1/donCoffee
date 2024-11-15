@@ -2,9 +2,9 @@ from django.shortcuts import render
 from store.models import Producto, ReviewRating
 
 def home(request):
-    productos = Producto.objects.all().filter(disponible=True).order_by('fecha_creacion')
+    productos = Producto.objects.all().filter(disponible=True).order_by('fecha_creacion')[:8]  # Limitar a 6 productos inicialmente
     
-    # Lista para almacenar las estrellas de cada producto
+    # Lista para almacenar los productos y sus estrellas
     productos_con_estrellas = []
 
     for producto in productos:
@@ -27,11 +27,18 @@ def home(request):
 
         productos_con_estrellas.append({
             'producto': producto,
-            'stars': stars
+            'stars': stars,
+            'average_review': average_review,  # Agregamos el promedio para ordenarlo
         })
 
+    # Ordenar los productos por el promedio de reseñas (de mayor a menor)
+    productos_con_estrellas = sorted(productos_con_estrellas, key=lambda x: x['average_review'], reverse=True)
+
+    # Tomar solo los primeros 6 productos mejor valorados
+    productos_mejor_valorados = productos_con_estrellas[:8]
+
     context = {
-        'productos_con_estrellas': productos_con_estrellas,
+        'productos_con_estrellas': productos_mejor_valorados,
     }
     
     return render(request, 'home.html', context)
