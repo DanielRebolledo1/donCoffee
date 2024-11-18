@@ -267,7 +267,7 @@ def pedidos_grafico(request):
     productos_comprados = Pedido_producto.objects.filter(pedido__in=pedidos_completados) \
         .values('producto_id') \
         .annotate(total_compras=Sum('cantidad')) \
-        .order_by('-total_compras')[:10]  # Obtener los 10 productos más comprados
+        .order_by('-total_compras')[:5]  # Obtener los 10 productos más comprados
 
     # Obtener los productos y las cantidades
     productos = Producto.objects.filter(id__in=[producto['producto_id'] for producto in productos_comprados])
