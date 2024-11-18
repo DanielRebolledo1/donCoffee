@@ -183,7 +183,7 @@ def order_complete(request):
             'pago': pago,
             'productos_pedido': productos_pedido,  # Pasamos los productos al contexto
         })
-        to_email = request.user.email
+        to_email = pedido.email
         send_email = EmailMessage(mail_subject, message, settings.EMAIL_HOST_USER, to=[to_email])
         send_email.content_subtype = 'html'  # Especificamos el tipo de contenido como HTML
         send_email.send()
